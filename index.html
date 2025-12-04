@@ -46,53 +46,37 @@
   .input-row {
     display: flex;
     gap: 6px;
-    flex-wrap: wrap;
   }
 
-  .input-row input[type="number"] {
-    flex: 1 1 100px;
+  .input-row input[type="number"], 
+.input-row select {
+    flex: 1;
     padding: 8px 10px;
     border-radius: 16px;
     border: 1px solid #e0cce0;
     background: #fff0f8;
     font-size: 14px;
     outline: none;
-    cursor: pointer;
+    appearance: none;
     transition: all 0.2s ease;
-  }
+    cursor: pointer;
+}
 
-  .input-row input[type="number"]:hover {
+.input-row input[type="number"]:hover,
+.input-row select:hover {
     background: #ffe6f0;
     border-color: #ff82a9;
     box-shadow: 0 2px 6px rgba(255,130,169,0.3);
-  }
+}
 
-  /* Cute custom button selects */
-  .custom-btn-select {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-
-  .custom-btn-select button {
-    flex: 1;
-    padding: 6px 8px;
-    border-radius: 16px;
-    border: 1px solid #e0cce0;
+.input-row select option {
     background: #fff0f8;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 13px;
-  }
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin: 2px 0;
+}
 
-  .custom-btn-select button:hover,
-  .custom-btn-select button.active {
-    background: #ffe6f0;
-    border-color: #ff82a9;
-    box-shadow: 0 2px 6px rgba(255,130,169,0.3);
-  }
-
-  .input-row button#addBtn {
+.input-row button {
     padding: 8px 12px;
     border-radius: 16px;
     border: none;
@@ -101,78 +85,78 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
+}
 
-  .input-row button#addBtn:hover {
+.input-row button:hover {
     transform: scale(1.08);
     box-shadow: 0 4px 12px rgba(255,130,169,0.3);
-  }
+}
 
-  .progress-bar {
+.progress-bar {
     height: 14px;
     background: #ffe0ea;
     border-radius: 8px;
     overflow: hidden;
     margin-top: 6px;
-  }
+}
 
-  .progress-fill {
+.progress-fill {
     height: 100%;
     background: #ff82a9;
     width: 0%;
     transition: width 0.3s ease;
-  }
+}
 
-  .category-bars {
+.category-bars {
     display: flex;
     flex-direction: column;
     gap: 4px;
     margin-top: 6px;
-  }
+}
 
-  .category-bar {
+.category-bar {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 12px;
-  }
+}
 
-  .category-fill {
+.category-fill {
     height: 12px;
     background: #ffb6c1;
     border-radius: 6px;
     flex-grow: 1;
     width: 0%;
     transition: width 0.3s ease;
-  }
+}
 
-  .category-label {
+.category-label {
     min-width: 60px;
     text-transform: capitalize;
-  }
+}
 
-  .themes {
+.themes {
     display: flex;
     justify-content: center;
     gap: 6px;
     margin-top: 10px;
-  }
+}
 
-  .themes button {
+.themes button {
     width: 20px;
     height: 20px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-  }
+}
 
-  .themes button:hover {
+.themes button:hover {
     transform: scale(1.2);
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
+}
 
-  .reset-btn {
+.reset-btn {
     padding: 6px 10px;
     border-radius: 12px;
     border: none;
@@ -182,11 +166,27 @@
     cursor: pointer;
     margin-top: 8px;
     transition: 0.2s;
-  }
+}
 
-  .reset-btn:hover {
+.reset-btn:hover {
     transform: scale(1.05);
-  }
+}
+
+#snapshotBtn {
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: none;
+    background: #ff9ab8;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: 0.2s;
+}
+
+#snapshotBtn:hover {
+    transform: scale(1.05);
+}
 </style>
 </head>
 <body>
@@ -198,24 +198,21 @@
 
   <div class="input-row">
     <input type="number" id="amountInput" placeholder="Amount">
-    
-    <!-- Income / Expense buttons -->
-    <div class="custom-btn-select" id="typeSelectBtn">
-      <button data-type="income" class="active">Income</button>
-      <button data-type="expense">Expense</button>
-    </div>
-    
-    <!-- Expense categories -->
-    <div class="custom-btn-select" id="categorySelectBtn" style="display:none;">
-      <button data-cat="self care" class="active">Self Care</button>
-      <button data-cat="entertainment">Entertainment</button>
-      <button data-cat="food">Food</button>
-      <button data-cat="shopping">Shopping</button>
-      <button data-cat="other">Other</button>
-    </div>
-
+    <select id="typeSelect">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+    <select id="categorySelect" style="display:none;">
+      <option value="self care">Self Care</option>
+      <option value="entertainment">Entertainment</option>
+      <option value="food">Food</option>
+      <option value="shopping">Shopping</option>
+      <option value="other">Other</option>
+    </select>
     <button id="addBtn">Add</button>
   </div>
+
+  <button id="snapshotBtn">Snapshot Month</button>
 
   <div>Total Expenses</div>
   <div class="progress-bar">
@@ -239,63 +236,91 @@ let balance = 0;
 let totalExpenses = 0;
 let categories = {};
 let totalIncome = 0;
+let entries = [];
 
+// DOM elements
 const balanceEl = document.getElementById("balance");
 const incomeOutEl = document.getElementById("incomeOut");
 const amountInput = document.getElementById("amountInput");
+const typeSelect = document.getElementById("typeSelect");
+const categorySelect = document.getElementById("categorySelect");
 const addBtn = document.getElementById("addBtn");
 const totalExpensesFill = document.getElementById("totalExpensesFill");
 const categoryBars = document.getElementById("categoryBars");
 const themeBtns = document.querySelectorAll(".themes button");
 const resetBtn = document.getElementById("resetBtn");
+const snapshotBtn = document.getElementById("snapshotBtn");
 
-// Custom buttons
-const typeSelectBtn = document.getElementById("typeSelectBtn");
-const categorySelectBtn = document.getElementById("categorySelectBtn");
-let selectedType = "income";
-let selectedCategory = "self care";
+// Load from localStorage
+function loadData() {
+  const savedBalance = localStorage.getItem("financeBalance");
+  const savedExpenses = localStorage.getItem("financeExpenses");
+  const savedCategories = localStorage.getItem("financeCategories");
+  const savedIncome = localStorage.getItem("financeIncome");
+  const savedEntries = localStorage.getItem("financeEntries");
+  const savedTheme = localStorage.getItem("financeTheme");
 
-// Handle type button clicks
-typeSelectBtn.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    typeSelectBtn.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    selectedType = btn.dataset.type;
-    if(selectedType === "expense") {
-      categorySelectBtn.style.display = "flex";
-      addBtn.textContent = "Pay";
-    } else {
-      categorySelectBtn.style.display = "none";
-      addBtn.textContent = "Add";
-    }
-  });
+  balance = savedBalance ? parseFloat(savedBalance) : 0;
+  totalExpenses = savedExpenses ? parseFloat(savedExpenses) : 0;
+  categories = savedCategories ? JSON.parse(savedCategories) : {};
+  totalIncome = savedIncome ? parseFloat(savedIncome) : 0;
+  entries = savedEntries ? JSON.parse(savedEntries) : [];
+
+  if(savedTheme) document.querySelector(".widget").style.background = savedTheme;
+
+  updateUI();
+}
+
+// Toggle category select for expense
+typeSelect.addEventListener("change", () => {
+  if(typeSelect.value === "expense") {
+    categorySelect.style.display = "block";
+    addBtn.textContent = "Pay";
+  } else {
+    categorySelect.style.display = "none";
+    addBtn.textContent = "Add";
+  }
 });
 
-// Handle category button clicks
-categorySelectBtn.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    categorySelectBtn.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    selectedCategory = btn.dataset.cat;
-  });
-});
-
-// Add / Pay button
+// Add entry
 addBtn.addEventListener("click", () => {
   const amount = parseFloat(amountInput.value);
   if(isNaN(amount) || amount <= 0) return;
 
-  if(selectedType === "income") {
+  const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  if(typeSelect.value === "income") {
     balance += amount;
     totalIncome += amount;
+    entries.push({type: "income", amount, date});
   } else {
+    const category = categorySelect.value;
     totalExpenses += amount;
-    categories[selectedCategory] = (categories[selectedCategory] || 0) + amount;
+    categories[category] = (categories[category] || 0) + amount;
+    entries.push({type: "expense", amount, category, date});
   }
 
   saveData();
   updateUI();
   amountInput.value = "";
+});
+
+// Snapshot button
+snapshotBtn.addEventListener("click", () => {
+  const month = new Date().toISOString().slice(0,7); // YYYY-MM
+  const archive = JSON.parse(localStorage.getItem("financeArchive") || "{}");
+  archive[month] = {balance, totalIncome, totalExpenses, categories, entries};
+  localStorage.setItem("financeArchive", JSON.stringify(archive));
+
+  // Reset current month
+  balance = 0;
+  totalExpenses = 0;
+  totalIncome = 0;
+  categories = {};
+  entries = [];
+  saveData();
+  updateUI();
+  alert(`Snapshot for ${month} saved!`);
 });
 
 // Theme buttons
@@ -313,6 +338,7 @@ resetBtn.addEventListener("click", () => {
   totalExpenses = 0;
   totalIncome = 0;
   categories = {};
+  entries = [];
   saveData();
   updateUI();
 });
@@ -341,26 +367,10 @@ function saveData() {
   localStorage.setItem("financeExpenses", totalExpenses);
   localStorage.setItem("financeCategories", JSON.stringify(categories));
   localStorage.setItem("financeIncome", totalIncome);
+  localStorage.setItem("financeEntries", JSON.stringify(entries));
 }
 
-// Load saved data
-function loadData() {
-  const savedBalance = localStorage.getItem("financeBalance");
-  const savedExpenses = localStorage.getItem("financeExpenses");
-  const savedCategories = localStorage.getItem("financeCategories");
-  const savedIncome = localStorage.getItem("financeIncome");
-  const savedTheme = localStorage.getItem("financeTheme");
-
-  balance = savedBalance ? parseFloat(savedBalance) : 0;
-  totalExpenses = savedExpenses ? parseFloat(savedExpenses) : 0;
-  categories = savedCategories ? JSON.parse(savedCategories) : {};
-  totalIncome = savedIncome ? parseFloat(savedIncome) : 0;
-
-  if(savedTheme) document.querySelector(".widget").style.background = savedTheme;
-
-  updateUI();
-}
-
+// Initial load
 loadData();
 </script>
 
