@@ -171,7 +171,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
 
-  .reset-btn {
+  .reset-btn, #snapshotBtn, #viewSnapshotsBtn {
     padding: 6px 10px;
     border-radius: 12px;
     border: none;
@@ -179,28 +179,54 @@
     color: white;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 8px;
-    transition: 0.2s;
-  }
-
-  .reset-btn:hover {
-    transform: scale(1.05);
-  }
-
-  #snapshotBtn {
-    padding: 6px 10px;
-    border-radius: 12px;
-    border: none;
-    background: #ff9ab8;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
     margin-top: 4px;
     transition: 0.2s;
   }
 
-  #snapshotBtn:hover {
+  .reset-btn:hover, #snapshotBtn:hover, #viewSnapshotsBtn:hover {
     transform: scale(1.05);
+  }
+
+  #transactions {
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 12px;
+    margin-top: 6px;
+    border-top: 1px solid #ffcce0;
+    padding-top: 4px;
+  }
+
+  #transactions div {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+
+  #snapshotModal {
+    display: none;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff0f8;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  #snapshotModal h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #snapshotModal button {
+    margin-top: 6px;
+    background: #ff82a9;
+    width: 100%;
   }
 </style>
 </head>
@@ -231,6 +257,7 @@
   </div>
 
   <button id="snapshotBtn">Snapshot Month</button>
+  <button id="viewSnapshotsBtn">View Snapshots</button>
 
   <div>Total Expenses</div>
   <div class="progress-bar">
@@ -238,6 +265,8 @@
   </div>
 
   <div class="category-bars" id="categoryBars"></div>
+
+  <div id="transactions"></div>
 
   <div class="themes">
     <button data-color="#fdf0f5" style="background:#fdf0f5"></button>
@@ -247,6 +276,12 @@
   </div>
 
   <button class="reset-btn" id="resetBtn">Reset Tracker</button>
+</div>
+
+<div id="snapshotModal">
+  <h3>Archived Snapshots</h3>
+  <div id="archiveList"></div>
+  <button id="closeModalBtn">Close</button>
 </div>
 
 <script>
@@ -265,6 +300,12 @@ const categoryBars = document.getElementById("categoryBars");
 const themeBtns = document.querySelectorAll(".themes button");
 const resetBtn = document.getElementById("resetBtn");
 const snapshotBtn = document.getElementById("snapshotBtn");
+const viewSnapshotsBtn = document.getElementById("viewSnapshotsBtn");
+const transactionsDiv = document.getElementById("transactions");
+
+const snapshotModal = document.getElementById("snapshotModal");
+const archiveList = document.getElementById("archiveList");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
 const typeSelectBtn = document.getElementById("typeSelectBtn");
 const categorySelectBtn = document.getElementById("categorySelectBtn");
@@ -301,7 +342,7 @@ addBtn.addEventListener("click", () => {
   const amount = parseFloat(amountInput.value);
   if(isNaN(amount) || amount <= 0) return;
 
-  const date = new Date().toISOString().split("T")[0]; // auto-date YYYY-MM-DD
+  const date = new Date().toISOString().split("T")[0];
 
   if(selectedType === "income") {
     balance += amount;
@@ -320,12 +361,12 @@ addBtn.addEventListener("click", () => {
 
 // Snapshot month
 snapshotBtn.addEventListener("click", () => {
-  const month = new Date().toISOString().slice(0,7); // YYYY-MM
+  const month = new Date().toISOString().slice(0,7);
   const archive = JSON.parse(localStorage.getItem("financeArchive") || "{}");
   archive[month] = {balance, totalIncome, totalExpenses, categories, entries};
   localStorage.setItem("financeArchive", JSON.stringify(archive));
 
-  // Reset for new month
+  // Reset
   balance = 0;
   totalExpenses = 0;
   totalIncome = 0;
@@ -334,6 +375,23 @@ snapshotBtn.addEventListener("click", () => {
   saveData();
   updateUI();
   alert(`Snapshot for ${month} saved!`);
+});
+
+// View snapshots
+viewSnapshotsBtn.addEventListener("click", () => {
+  const archive = JSON.parse(localStorage.getItem("financeArchive") || "{}");
+  archiveList.innerHTML = "";
+  for(const month in archive) {
+    const data = archive[month];
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${month}</strong>: Income $${data.totalIncome.toFixed(2)}, Expenses $${data.totalExpenses.toFixed(2)}`;
+    archiveList.appendChild(div);
+  }
+  snapshotModal.style.display = "block";
+});
+
+closeModalBtn.addEventListener("click", () => {
+  snapshotModal.style.display = "none";
 });
 
 // Theme buttons
@@ -372,9 +430,16 @@ function updateUI() {
     barContainer.innerHTML = `<div class="category-label">${cat}</div><div class="category-fill" style="width:${percent}%"></div><div>$${categories[cat].toFixed(2)}</div>`;
     categoryBars.appendChild(barContainer);
   }
+
+  transactionsDiv.innerHTML = "";
+  entries.forEach(entry => {
+    const div = document.createElement("div");
+    div.textContent = `${entry.date}: ${entry.type === "income" ? "Income" : entry.category} $${entry.amount.toFixed(2)}`;
+    transactionsDiv.appendChild(div);
+  });
 }
 
-// Save to localStorage
+// Save data
 function saveData() {
   localStorage.setItem("financeBalance", balance);
   localStorage.setItem("financeExpenses", totalExpenses);
@@ -383,7 +448,7 @@ function saveData() {
   localStorage.setItem("financeEntries", JSON.stringify(entries));
 }
 
-// Load saved data
+// Load data
 function loadData() {
   const savedBalance = localStorage.getItem("financeBalance");
   const savedExpenses = localStorage.getItem("financeExpenses");
