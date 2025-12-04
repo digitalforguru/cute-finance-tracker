@@ -198,6 +198,7 @@
     padding-top: 4px;
   }
 
+  /* Snapshot popup inside widget */
   #snapshotPopup {
     position: absolute;
     top: 10px;
@@ -214,6 +215,7 @@
     pointer-events: none;
   }
 
+  /* Snapshot archive modal inside widget */
   #snapshotModal {
     display: none;
     position: absolute;
@@ -229,34 +231,34 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     z-index: 100;
   }
+  /* Close button for snapshots modal */
+#snapshotModal .closeModalBtn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: #ff82a9;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 18px;
+  text-align: center;
+  font-size: 14px;
+  padding: 0;
+  transition: 0.2s;
+}
+
+#snapshotModal .closeModalBtn:hover {
+  transform: scale(1.1);
+}
 
   #snapshotModal h3 {
     margin-top: 0;
     text-align: center;
     font-size: 14px;
-  }
-
-  #snapshotModal button.modalClose {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    background: #ff82a9;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 18px;
-    text-align: center;
-    font-size: 14px;
-    padding: 0;
-    transition: 0.2s;
-  }
-
-  #snapshotModal button.modalClose:hover {
-    transform: scale(1.1);
   }
 
   .snapshotMonth {
@@ -350,7 +352,7 @@
 </div>
 
 <div id="snapshotModal">
-  <button class="modalClose">×</button>
+  <button class="closeModalBtn">×</button>
   <h3>Archived Snapshots</h3>
   <div id="archiveList"></div>
 </div>
@@ -377,17 +379,15 @@ const snapshotPopup = document.getElementById("snapshotPopup");
 
 const snapshotModal = document.getElementById("snapshotModal");
 const archiveList = document.getElementById("archiveList");
-const closeModalBtn = document.querySelector("#snapshotModal .modalClose");
-
+const closeModalBtn2 = document.querySelector("#snapshotModal .closeModalBtn");
+closeModalBtn2.addEventListener("click", () => {
+  snapshotModal.style.display = "none";
+});
+  
 const typeSelectBtn = document.getElementById("typeSelectBtn");
 const categorySelectBtn = document.getElementById("categorySelectBtn");
 let selectedType = "income";
 let selectedCategory = "self care";
-
-// Close snapshot modal
-closeModalBtn.addEventListener("click", () => {
-  snapshotModal.style.display = "none";
-});
 
 // Type button clicks
 typeSelectBtn.querySelectorAll("button").forEach(btn => {
@@ -558,17 +558,17 @@ function loadData() {
   balance = savedBalance ? parseFloat(savedBalance) : 0;
   totalExpenses = savedExpenses ? parseFloat(savedExpenses) : 0;
   categories = savedCategories ? JSON.parse(savedCategories) : {};
-  totalIncome = savedIncome ? parseFloat(savedIncome) :0 : 0;
-entries = savedEntries ? JSON.parse(savedEntries) : [];
+  totalIncome = savedIncome ? parseFloat(savedIncome) : 0;
+  entries = savedEntries ? JSON.parse(savedEntries) : [];
 
-if(savedTheme) document.querySelector(”.widget”).style.background = savedTheme;
+  if(savedTheme) document.querySelector(".widget").style.background = savedTheme;
 
-updateUI();
+  updateUI();
 }
 
 loadData();
-</body>  
-</html>
-```
+</script>
 
+</body>
+</html>
 
