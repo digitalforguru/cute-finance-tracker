@@ -5,171 +5,122 @@
 <title>Finance Tracker Widget</title>
 
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    background: transparent;
-  }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: transparent;
+}
 
-  .widget {
-    width: 260px;
-    padding: 20px;
-    border-radius: 22px;
-    background: #d6f8e0;
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s ease;
-  }
+.widget {
+  width: 260px;
+  padding: 20px;
+  border-radius: 22px;
+  background: #d6f8e0;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
 
-  .widget h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
-    text-align: center;
-  }
+.widget h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: center;
+}
 
-  .balance {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 12px;
-  }
+.balance {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+}
 
-  .divider {
-    height: 1px;
-    background: rgba(0,0,0,0.1);
-    margin: 10px 0;
-  }
+.divider {
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+  margin: 10px 0;
+}
 
-  .row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 
-  .row input {
-    width: 60%;
-    padding: 6px 8px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.2);
-    font-size: 14px;
-  }
+.row input, .row select {
+  width: 60%;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.2);
+  font-size: 14px;
+}
 
-  .row button {
-    width: 35%;
-    background: #ffe0b2;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.2s;
-  }
+.row button {
+  width: 35%;
+  background: #ffe0b2;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
 
-  .row button:hover {
-    transform: scale(1.05);
-  }
+.row button:hover {
+  transform: scale(1.05);
+}
 
-  .calculator {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-top: 10px;
-  }
+.category-bars {
+  margin-top: 10px;
+}
 
-  .calculator button {
-    padding: 10px;
-    border-radius: 12px;
-    border: none;
-    background: #ffd6e0;
-    font-size: 14px;
-    cursor: pointer;
-    transition: transform 0.15s;
-  }
+.category {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
 
-  .calculator button:hover {
-    transform: scale(1.1);
-  }
+.bar {
+  height: 8px;
+  border-radius: 6px;
+  background: #76c7c0;
+  flex: 1;
+  margin-left: 6px;
+}
 
-  #calcDisplay {
-    grid-column: span 4;
-    padding: 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.2);
-    margin-bottom: 6px;
-    text-align: right;
-    font-size: 16px;
-  }
-
-  .category-bars {
-    margin-top: 10px;
-  }
-
-  .category {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .bar {
-    height: 8px;
-    border-radius: 6px;
-    background: #76c7c0;
-    flex: 1;
-    margin-left: 6px;
-  }
-
-  .finance-quote {
-    font-size: 12px;
-    font-style: italic;
-    text-align: center;
-    margin-top: 10px;
-    opacity: 0.8;
-  }
-
+.finance-quote {
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  margin-top: 10px;
+  opacity: 0.8;
+}
 </style>
 </head>
 
 <body>
-
 <div class="widget">
   <h2>Finance Tracker 💰</h2>
   <div class="balance" id="balance">$0.00</div>
   <div class="divider"></div>
 
+  <!-- Income row -->
   <div class="row">
     <input type="number" id="incomeInput" placeholder="Income $">
     <button id="addIncome">Add</button>
   </div>
+
+  <!-- Expense row -->
   <div class="row">
     <input type="number" id="expenseInput" placeholder="Expense $">
+    <select id="expenseCategory">
+      <option value="Self Care">Self Care</option>
+      <option value="Food">Food</option>
+      <option value="Bills">Bills</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="Other">Other</option>
+    </select>
     <button id="addExpense">Add</button>
-  </div>
-
-  <div class="divider"></div>
-
-  <div id="calcDisplay">0</div>
-  <div class="calculator">
-    <button data-val="7">7</button>
-    <button data-val="8">8</button>
-    <button data-val="9">9</button>
-    <button data-val="/">÷</button>
-
-    <button data-val="4">4</button>
-    <button data-val="5">5</button>
-    <button data-val="6">6</button>
-    <button data-val="*">×</button>
-
-    <button data-val="1">1</button>
-    <button data-val="2">2</button>
-    <button data-val="3">3</button>
-    <button data-val="-">−</button>
-
-    <button data-val="0">0</button>
-    <button data-val=".">.</button>
-    <button id="calcEqual">=</button>
-    <button data-val="+">+</button>
   </div>
 
   <div class="divider"></div>
@@ -184,13 +135,12 @@ let balance = 0;
 const balanceEl = document.getElementById("balance");
 const incomeInput = document.getElementById("incomeInput");
 const expenseInput = document.getElementById("expenseInput");
-
+const expenseCategory = document.getElementById("expenseCategory");
 const addIncome = document.getElementById("addIncome");
 const addExpense = document.getElementById("addExpense");
-
 const categoryBars = document.getElementById("categoryBars");
-
 const financeQuote = document.getElementById("financeQuote");
+
 const quotes = [
   "Small savings become big gains ✨",
   "Track a little, gain a lot 🌱",
@@ -199,68 +149,48 @@ const quotes = [
   "Your future self thanks you 🐢"
 ];
 
+const expenses = {}; // {category: amount}
+
+// ------------------- FUNCTIONS -------------------
 function updateBalance() {
   balanceEl.textContent = `$${balance.toFixed(2)}`;
   renderCategories();
 }
 
-const categories = {};
-
 function renderCategories() {
   categoryBars.innerHTML = '';
-  Object.keys(categories).forEach(cat => {
+  const totalExpense = Object.values(expenses).reduce((a,b)=>a+b,0) || 1;
+  Object.keys(expenses).forEach(cat => {
     const row = document.createElement('div');
     row.className = 'category';
-    row.innerHTML = `<span>${cat}</span><div class="bar" style="width:${Math.min(categories[cat], 100)}%"></div>`;
+    const pct = Math.min((expenses[cat]/totalExpense)*100, 100);
+    row.innerHTML = `<span>${cat}</span><div class="bar" style="width:${pct}%"></div>`;
     categoryBars.appendChild(row);
   });
 }
 
+// ------------------- EVENT LISTENERS -------------------
 addIncome.addEventListener('click', () => {
   const val = parseFloat(incomeInput.value) || 0;
   balance += val;
-  categories['Income'] = (categories['Income'] || 0) + val;
   incomeInput.value = '';
   updateBalance();
 });
 
 addExpense.addEventListener('click', () => {
   const val = parseFloat(expenseInput.value) || 0;
+  const cat = expenseCategory.value;
+  if(val <= 0) return;
   balance -= val;
-  categories['Expense'] = (categories['Expense'] || 0) + val;
+  expenses[cat] = (expenses[cat] || 0) + val;
   expenseInput.value = '';
   updateBalance();
-});
-
-// ------------------- CALCULATOR -------------------
-const calcDisplay = document.getElementById("calcDisplay");
-let calcExpression = '';
-
-document.querySelectorAll(".calculator button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const val = btn.dataset.val;
-    if(val) {
-      calcExpression += val;
-      calcDisplay.textContent = calcExpression;
-    }
-  });
-});
-
-document.getElementById("calcEqual").addEventListener("click", () => {
-  try {
-    const result = eval(calcExpression);
-    calcDisplay.textContent = result;
-    calcExpression = result.toString();
-  } catch {
-    calcDisplay.textContent = "Error";
-    calcExpression = '';
-  }
 });
 
 // ------------------- RANDOM QUOTE -------------------
 financeQuote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
+updateBalance();
 </script>
-
 </body>
 </html>
