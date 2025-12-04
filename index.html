@@ -3,194 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <title>Finance Tracker Widget</title>
-
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  background: transparent;
-}
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background: transparent;
+  }
 
-.widget {
-  width: 260px;
-  padding: 20px;
-  border-radius: 22px;
-  background: #d6f8e0;
-  box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
+  .widget {
+    width: 280px;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fdf0f5;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-.widget h2 {
-  font-size: 18px;
-  margin-bottom: 12px;
-  text-align: center;
-}
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    text-align: center;
+  }
 
-.balance {
-  font-size: 16px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 12px;
-}
+  #balance {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+  }
 
-.divider {
-  height: 1px;
-  background: rgba(0,0,0,0.1);
-  margin: 10px 0;
-}
+  .input-row {
+    display: flex;
+    gap: 6px;
+  }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
+  .input-row input[type="number"] {
+    flex: 1;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
 
-.row input, .row select {
-  width: 60%;
-  padding: 6px 8px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.2);
-  font-size: 14px;
-}
+  .input-row select {
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
 
-.row button {
-  width: 35%;
-  background: #ffe0b2;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: transform 0.2s;
-}
+  .input-row button {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background: #ff82a9;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
 
-.row button:hover {
-  transform: scale(1.05);
-}
+  .input-row button:hover {
+    transform: scale(1.05);
+  }
 
-.category-bars {
-  margin-top: 10px;
-}
+  .progress-bar {
+    height: 14px;
+    background: #ffe0ea;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
 
-.category {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
+  .progress-fill {
+    height: 100%;
+    background: #ff82a9;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
 
-.bar {
-  height: 8px;
-  border-radius: 6px;
-  background: #76c7c0;
-  flex: 1;
-  margin-left: 6px;
-}
+  .category-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+  }
 
-.finance-quote {
-  font-size: 12px;
-  font-style: italic;
-  text-align: center;
-  margin-top: 10px;
-  opacity: 0.8;
-}
+  .category-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .category-fill {
+    height: 12px;
+    background: #ffb6c1;
+    border-radius: 6px;
+    flex-grow: 1;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .category-label {
+    min-width: 60px;
+    text-transform: capitalize;
+  }
 </style>
 </head>
-
 <body>
+
 <div class="widget">
-  <h2>Finance Tracker 💰</h2>
-  <div class="balance" id="balance">$0.00</div>
-  <div class="divider"></div>
+  <h2>Finance Tracker</h2>
+  <div id="balance">$0.00</div>
 
-  <!-- Income row -->
-  <div class="row">
-    <input type="number" id="incomeInput" placeholder="Income $">
-    <button id="addIncome">Add</button>
-  </div>
-
-  <!-- Expense row -->
-  <div class="row">
-    <input type="number" id="expenseInput" placeholder="Expense $">
-    <select id="expenseCategory">
-      <option value="Self Care">Self Care</option>
-      <option value="Food">Food</option>
-      <option value="Bills">Bills</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Other">Other</option>
+  <div class="input-row">
+    <input type="number" id="amountInput" placeholder="Amount">
+    <select id="typeSelect">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
     </select>
-    <button id="addExpense">Add</button>
+    <select id="categorySelect" style="display:none;">
+      <option value="self care">Self Care</option>
+      <option value="entertainment">Entertainment</option>
+      <option value="food">Food</option>
+      <option value="shopping">Shopping</option>
+      <option value="other">Other</option>
+    </select>
+    <button id="addBtn">Add</button>
   </div>
 
-  <div class="divider"></div>
+  <div>Total Expenses</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="totalExpensesFill"></div>
+  </div>
 
   <div class="category-bars" id="categoryBars"></div>
-
-  <div class="finance-quote" id="financeQuote">Small savings become big gains ✨</div>
 </div>
 
 <script>
 let balance = 0;
+let totalExpenses = 0;
+let categories = {};
+
 const balanceEl = document.getElementById("balance");
-const incomeInput = document.getElementById("incomeInput");
-const expenseInput = document.getElementById("expenseInput");
-const expenseCategory = document.getElementById("expenseCategory");
-const addIncome = document.getElementById("addIncome");
-const addExpense = document.getElementById("addExpense");
+const amountInput = document.getElementById("amountInput");
+const typeSelect = document.getElementById("typeSelect");
+const categorySelect = document.getElementById("categorySelect");
+const addBtn = document.getElementById("addBtn");
+const totalExpensesFill = document.getElementById("totalExpensesFill");
 const categoryBars = document.getElementById("categoryBars");
-const financeQuote = document.getElementById("financeQuote");
 
-const quotes = [
-  "Small savings become big gains ✨",
-  "Track a little, gain a lot 🌱",
-  "Every coin counts 💰",
-  "Mindful spending, happy life 🌸",
-  "Your future self thanks you 🐢"
-];
-
-const expenses = {}; // {category: amount}
-
-// ------------------- FUNCTIONS -------------------
-function updateBalance() {
-  balanceEl.textContent = `$${balance.toFixed(2)}`;
-  renderCategories();
-}
-
-function renderCategories() {
-  categoryBars.innerHTML = '';
-  const totalExpense = Object.values(expenses).reduce((a,b)=>a+b,0) || 1;
-  Object.keys(expenses).forEach(cat => {
-    const row = document.createElement('div');
-    row.className = 'category';
-    const pct = Math.min((expenses[cat]/totalExpense)*100, 100);
-    row.innerHTML = `<span>${cat}</span><div class="bar" style="width:${pct}%"></div>`;
-    categoryBars.appendChild(row);
-  });
-}
-
-// ------------------- EVENT LISTENERS -------------------
-addIncome.addEventListener('click', () => {
-  const val = parseFloat(incomeInput.value) || 0;
-  balance += val;
-  incomeInput.value = '';
-  updateBalance();
+// Toggle category select for expense
+typeSelect.addEventListener("change", () => {
+  if(typeSelect.value === "expense") {
+    categorySelect.style.display = "block";
+    addBtn.textContent = "Pay";
+  } else {
+    categorySelect.style.display = "none";
+    addBtn.textContent = "Add";
+  }
 });
 
-addExpense.addEventListener('click', () => {
-  const val = parseFloat(expenseInput.value) || 0;
-  const cat = expenseCategory.value;
-  if(val <= 0) return;
-  balance -= val;
-  expenses[cat] = (expenses[cat] || 0) + val;
-  expenseInput.value = '';
-  updateBalance();
+addBtn.addEventListener("click", () => {
+  const amount = parseFloat(amountInput.value);
+  if(isNaN(amount) || amount <= 0) return;
+
+  if(typeSelect.value === "income") {
+    balance += amount;
+  } else {
+    const category = categorySelect.value;
+    totalExpenses += amount;
+    categories[category] = (categories[category] || 0) + amount;
+  }
+
+  updateUI();
+  amountInput.value = "";
 });
 
-// ------------------- RANDOM QUOTE -------------------
-financeQuote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+// Update progress bars and balance
+function updateUI() {
+  balanceEl.textContent = `$${(balance - totalExpenses).toFixed(2)}`;
 
-updateBalance();
+  const expensePercent = balance ? Math.min((totalExpenses / balance) * 100, 100) : 0;
+  totalExpensesFill.style.width = `${expensePercent}%`;
+
+  categoryBars.innerHTML = "";
+  for(const cat in categories) {
+    const percent = balance ? Math.min((categories[cat] / balance) * 100, 100) : 0;
+    const barContainer = document.createElement("div");
+    barContainer.className = "category-bar";
+    barContainer.innerHTML = `<div class="category-label">${cat}</div><div class="category-fill" style="width:${percent}%"></div><div>$${categories[cat].toFixed(2)}</div>`;
+    categoryBars.appendChild(barContainer);
+  }
+}
 </script>
+
 </body>
 </html>
