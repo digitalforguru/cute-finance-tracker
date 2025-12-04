@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    transition: background 0.3s ease;
   }
 
   h2 {
@@ -33,7 +34,13 @@
     font-size: 24px;
     font-weight: 600;
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+  }
+
+  #incomeOut {
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.75;
   }
 
   .input-row {
@@ -41,22 +48,24 @@
     gap: 6px;
   }
 
-  .input-row input[type="number"] {
+  .input-row input[type="number"], .input-row select {
     flex: 1;
     padding: 6px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #ccc;
+    background: #fff;
+    font-size: 14px;
+    outline: none;
+    appearance: none;
   }
 
-  .input-row select {
-    padding: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+  .input-row select:hover {
+    border-color: #ff82a9;
   }
 
   .input-row button {
     padding: 6px 10px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: none;
     background: #ff82a9;
     color: white;
@@ -111,6 +120,43 @@
     min-width: 60px;
     text-transform: capitalize;
   }
+
+  .themes {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .themes button {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .themes button:hover {
+    transform: scale(1.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .reset-btn {
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: none;
+    background: #ff5c8d;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: 0.2s;
+  }
+
+  .reset-btn:hover {
+    transform: scale(1.05);
+  }
 </style>
 </head>
 <body>
@@ -118,6 +164,7 @@
 <div class="widget">
   <h2>Finance Tracker</h2>
   <div id="balance">$0.00</div>
+  <div id="incomeOut">Income In: $0.00 | Expenses Out: $0.00</div>
 
   <div class="input-row">
     <input type="number" id="amountInput" placeholder="Amount">
@@ -141,20 +188,51 @@
   </div>
 
   <div class="category-bars" id="categoryBars"></div>
+
+  <div class="themes">
+    <button data-color="#fdf0f5" style="background:#fdf0f5"></button>
+    <button data-color="#e0f7ff" style="background:#e0f7ff"></button>
+    <button data-color="#dfffe0" style="background:#dfffe0"></button>
+    <button data-color="#fff0d9" style="background:#fff0d9"></button>
+  </div>
+
+  <button class="reset-btn" id="resetBtn">Reset Tracker</button>
 </div>
 
 <script>
 let balance = 0;
 let totalExpenses = 0;
 let categories = {};
+let totalIncome = 0;
 
 const balanceEl = document.getElementById("balance");
+const incomeOutEl = document.getElementById("incomeOut");
 const amountInput = document.getElementById("amountInput");
 const typeSelect = document.getElementById("typeSelect");
 const categorySelect = document.getElementById("categorySelect");
 const addBtn = document.getElementById("addBtn");
 const totalExpensesFill = document.getElementById("totalExpensesFill");
 const categoryBars = document.getElementById("categoryBars");
+const themeBtns = document.querySelectorAll(".themes button");
+const resetBtn = document.getElementById("resetBtn");
+
+// Load from localStorage
+function loadData() {
+  const savedBalance = localStorage.getItem("financeBalance");
+  const savedExpenses = localStorage.getItem("financeExpenses");
+  const savedCategories = localStorage.getItem("financeCategories");
+  const savedIncome = localStorage.getItem("financeIncome");
+  const savedTheme = localStorage.getItem("financeTheme");
+
+  balance = savedBalance ? parseFloat(savedBalance) : 0;
+  totalExpenses = savedExpenses ? parseFloat(savedExpenses) : 0;
+  categories = savedCategories ? JSON.parse(savedCategories) : {};
+  totalIncome = savedIncome ? parseFloat(savedIncome) : 0;
+
+  if(savedTheme) document.querySelector(".widget").style.background = savedTheme;
+
+  updateUI();
+}
 
 // Toggle category select for expense
 typeSelect.addEventListener("change", () => {
@@ -173,19 +251,41 @@ addBtn.addEventListener("click", () => {
 
   if(typeSelect.value === "income") {
     balance += amount;
+    totalIncome += amount;
   } else {
     const category = categorySelect.value;
     totalExpenses += amount;
     categories[category] = (categories[category] || 0) + amount;
   }
 
+  saveData();
   updateUI();
   amountInput.value = "";
 });
 
-// Update progress bars and balance
+// Theme buttons
+themeBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const color = btn.dataset.color;
+    document.querySelector(".widget").style.background = color;
+    localStorage.setItem("financeTheme", color);
+  });
+});
+
+// Reset button
+resetBtn.addEventListener("click", () => {
+  balance = 0;
+  totalExpenses = 0;
+  totalIncome = 0;
+  categories = {};
+  saveData();
+  updateUI();
+});
+
+// Update UI
 function updateUI() {
   balanceEl.textContent = `$${(balance - totalExpenses).toFixed(2)}`;
+  incomeOutEl.textContent = `Income In: $${totalIncome.toFixed(2)} | Expenses Out: $${totalExpenses.toFixed(2)}`;
 
   const expensePercent = balance ? Math.min((totalExpenses / balance) * 100, 100) : 0;
   totalExpensesFill.style.width = `${expensePercent}%`;
@@ -199,6 +299,17 @@ function updateUI() {
     categoryBars.appendChild(barContainer);
   }
 }
+
+// Save to localStorage
+function saveData() {
+  localStorage.setItem("financeBalance", balance);
+  localStorage.setItem("financeExpenses", totalExpenses);
+  localStorage.setItem("financeCategories", JSON.stringify(categories));
+  localStorage.setItem("financeIncome", totalIncome);
+}
+
+// Initial load
+loadData();
 </script>
 
 </body>
