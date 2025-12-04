@@ -48,35 +48,49 @@
     gap: 6px;
   }
 
-  .input-row input[type="number"], .input-row select {
+  .input-row input[type="number"], 
+.input-row select {
     flex: 1;
-    padding: 6px;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    background: #fff;
+    padding: 8px 10px;
+    border-radius: 16px;
+    border: 1px solid #e0cce0;
+    background: #fff0f8;
     font-size: 14px;
     outline: none;
     appearance: none;
-  }
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
 
-  .input-row select:hover {
+.input-row input[type="number"]:hover,
+.input-row select:hover {
+    background: #ffe6f0;
     border-color: #ff82a9;
-  }
+    box-shadow: 0 2px 6px rgba(255,130,169,0.3);
+}
 
-  .input-row button {
-    padding: 6px 10px;
-    border-radius: 12px;
+.input-row select option {
+    background: #fff0f8;
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin: 2px 0;
+}
+
+.input-row button {
+    padding: 8px 12px;
+    border-radius: 16px;
     border: none;
     background: #ff82a9;
     color: white;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
-  }
+    transition: all 0.2s ease;
+}
 
-  .input-row button:hover {
-    transform: scale(1.05);
-  }
+.input-row button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(255,130,169,0.3);
+}
 
   .progress-bar {
     height: 14px;
