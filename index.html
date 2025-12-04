@@ -48,7 +48,8 @@
     gap: 6px;
   }
 
-  .input-row input[type="number"] {
+  .input-row input[type="number"], 
+.input-row select {
     flex: 1;
     padding: 8px 10px;
     border-radius: 16px;
@@ -56,70 +57,26 @@
     background: #fff0f8;
     font-size: 14px;
     outline: none;
+    appearance: none;
     transition: all 0.2s ease;
     cursor: pointer;
-  }
+}
 
-  .input-row input[type="number"]:hover {
+.input-row input[type="number"]:hover,
+.input-row select:hover {
     background: #ffe6f0;
     border-color: #ff82a9;
     box-shadow: 0 2px 6px rgba(255,130,169,0.3);
-  }
+}
 
-  /* Custom select */
-  .custom-select {
-    position: relative;
+.input-row select option {
     background: #fff0f8;
-    border-radius: 16px;
-    border: 1px solid #e0cce0;
-    cursor: pointer;
-    font-size: 14px;
-    user-select: none;
-    transition: all 0.2s ease;
-    padding: 8px 12px;
-    flex: 1;
-  }
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin: 2px 0;
+}
 
-  .custom-select:hover {
-    background: #ffe6f0;
-    border-color: #ff82a9;
-    box-shadow: 0 2px 6px rgba(255,130,169,0.3);
-  }
-
-  .custom-select .selected {
-    pointer-events: none;
-  }
-
-  .custom-select .options {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff0f8;
-    border-radius: 12px;
-    border: 1px solid #e0cce0;
-    margin-top: 4px;
-    display: none;
-    flex-direction: column;
-    z-index: 10;
-  }
-
-  .custom-select.active .options {
-    display: flex;
-  }
-
-  .custom-select .options div {
-    padding: 8px 12px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-  }
-
-  .custom-select .options div:hover {
-    background: #ffe6f0;
-    border-radius: 12px;
-  }
-
-  .input-row button {
+.input-row button {
     padding: 8px 12px;
     border-radius: 16px;
     border: none;
@@ -128,12 +85,12 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
+}
 
-  .input-row button:hover {
+.input-row button:hover {
     transform: scale(1.08);
     box-shadow: 0 4px 12px rgba(255,130,169,0.3);
-  }
+}
 
   .progress-bar {
     height: 14px;
@@ -225,28 +182,17 @@
 
   <div class="input-row">
     <input type="number" id="amountInput" placeholder="Amount">
-
-    <!-- Custom Type Select -->
-    <div class="custom-select" id="typeSelect">
-      <div class="selected" data-value="income">Income</div>
-      <div class="options">
-        <div data-value="income">Income</div>
-        <div data-value="expense">Expense</div>
-      </div>
-    </div>
-
-    <!-- Custom Category Select -->
-    <div class="custom-select" id="categorySelect" style="display:none;">
-      <div class="selected" data-value="self care">Self Care</div>
-      <div class="options">
-        <div data-value="self care">Self Care</div>
-        <div data-value="entertainment">Entertainment</div>
-        <div data-value="food">Food</div>
-        <div data-value="shopping">Shopping</div>
-        <div data-value="other">Other</div>
-      </div>
-    </div>
-
+    <select id="typeSelect">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+    <select id="categorySelect" style="display:none;">
+      <option value="self care">Self Care</option>
+      <option value="entertainment">Entertainment</option>
+      <option value="food">Food</option>
+      <option value="shopping">Shopping</option>
+      <option value="other">Other</option>
+    </select>
     <button id="addBtn">Add</button>
   </div>
 
@@ -302,32 +248,9 @@ function loadData() {
   updateUI();
 }
 
-// Custom select logic
-function setupCustomSelect(selectEl, callback) {
-  const selected = selectEl.querySelector(".selected");
-  const options = selectEl.querySelector(".options");
-
-  selected.addEventListener("click", () => {
-    selectEl.classList.toggle("active");
-  });
-
-  options.querySelectorAll("div").forEach(option => {
-    option.addEventListener("click", () => {
-      selected.textContent = option.textContent;
-      selected.dataset.value = option.dataset.value;
-      selectEl.classList.remove("active");
-      callback(option.dataset.value);
-    });
-  });
-
-  document.addEventListener("click", e => {
-    if(!selectEl.contains(e.target)) selectEl.classList.remove("active");
-  });
-}
-
 // Toggle category select for expense
-setupCustomSelect(typeSelect, (value) => {
-  if(value === "expense") {
+typeSelect.addEventListener("change", () => {
+  if(typeSelect.value === "expense") {
     categorySelect.style.display = "block";
     addBtn.textContent = "Pay";
   } else {
@@ -336,21 +259,15 @@ setupCustomSelect(typeSelect, (value) => {
   }
 });
 
-// Setup category select
-setupCustomSelect(categorySelect, (value) => {});
-
-// Add / Pay button
 addBtn.addEventListener("click", () => {
   const amount = parseFloat(amountInput.value);
   if(isNaN(amount) || amount <= 0) return;
 
-  const typeValue = typeSelect.querySelector(".selected").dataset.value;
-
-  if(typeValue === "income") {
+  if(typeSelect.value === "income") {
     balance += amount;
     totalIncome += amount;
   } else {
-    const category = categorySelect.querySelector(".selected").dataset.value;
+    const category = categorySelect.value;
     totalExpenses += amount;
     categories[category] = (categories[category] || 0) + amount;
   }
