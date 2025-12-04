@@ -22,6 +22,7 @@
     flex-direction: column;
     gap: 12px;
     transition: background 0.3s ease;
+    position: relative;
   }
 
   h2 {
@@ -181,6 +182,7 @@
     cursor: pointer;
     margin-top: 4px;
     transition: 0.2s;
+    font-size: 13px;
   }
 
   .reset-btn:hover, #snapshotBtn:hover, #viewSnapshotsBtn:hover {
@@ -227,7 +229,27 @@
     margin-top: 6px;
     background: #ff82a9;
     width: 100%;
+    border-radius: 12px;
+    font-size: 13px;
   }
+
+  /* Cute snapshot saved popup */
+  #snapshotPopup {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff82a9;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
 </style>
 </head>
 <body>
@@ -256,9 +278,6 @@
     <button id="addBtn">Add</button>
   </div>
 
-  <button id="snapshotBtn">Snapshot Month</button>
-  <button id="viewSnapshotsBtn">View Snapshots</button>
-
   <div>Total Expenses</div>
   <div class="progress-bar">
     <div class="progress-fill" id="totalExpensesFill"></div>
@@ -276,6 +295,10 @@
   </div>
 
   <button class="reset-btn" id="resetBtn">Reset Tracker</button>
+  <button id="snapshotBtn">Snapshot Month</button>
+  <button id="viewSnapshotsBtn">View Snapshots</button>
+
+  <div id="snapshotPopup"></div>
 </div>
 
 <div id="snapshotModal">
@@ -302,6 +325,7 @@ const resetBtn = document.getElementById("resetBtn");
 const snapshotBtn = document.getElementById("snapshotBtn");
 const viewSnapshotsBtn = document.getElementById("viewSnapshotsBtn");
 const transactionsDiv = document.getElementById("transactions");
+const snapshotPopup = document.getElementById("snapshotPopup");
 
 const snapshotModal = document.getElementById("snapshotModal");
 const archiveList = document.getElementById("archiveList");
@@ -366,6 +390,11 @@ snapshotBtn.addEventListener("click", () => {
   archive[month] = {balance, totalIncome, totalExpenses, categories, entries};
   localStorage.setItem("financeArchive", JSON.stringify(archive));
 
+  // Small cute popup
+  snapshotPopup.textContent = `Snapshot for ${month} saved!`;
+  snapshotPopup.style.opacity = 1;
+  setTimeout(() => snapshotPopup.style.opacity = 0, 2000);
+
   // Reset
   balance = 0;
   totalExpenses = 0;
@@ -374,7 +403,6 @@ snapshotBtn.addEventListener("click", () => {
   entries = [];
   saveData();
   updateUI();
-  alert(`Snapshot for ${month} saved!`);
 });
 
 // View snapshots
